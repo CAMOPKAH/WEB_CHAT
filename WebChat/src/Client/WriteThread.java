@@ -36,9 +36,18 @@ public class WriteThread extends Thread {
     {
         writer.println(Text);
     }
+    public boolean IsClose()
+    {
+
+        return client.isClose();
+    }
+    public void Stop()
+    {
+        System.out.println("CLOSE " + this.getClass());
+        this.Run=false;
+    }
 
     public void run() {
-
 
         String text="1";
 
@@ -49,14 +58,9 @@ public class WriteThread extends Thread {
                 e.printStackTrace();
             }
 
-        } while (!text.equals("bye") && this.Run);
+        } while (!text.equals("bye") && this.Run && !IsClose());
 
-        try {
-            socket.close();
-        } catch (IOException ex) {
-
-            System.out.println("Error writing to server: " + ex.getMessage());
-            Run=false;
-        }
+        writer.println("bye");
+        writer.close();
     }
 }

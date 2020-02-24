@@ -9,15 +9,22 @@ public class Player {
     public String Token;
     int ServerPort=8080;
     public ChatClient chat;
-    public Player (){
-        Name="none";
-    }
+    private Controller controller;
 
+    public Logger Log;
+
+    public Player (Controller controller){
+        Name="none";
+        Log= new Logger(Name);
+        this.controller=controller;
+    }
     public void setEventRead(Object objController, String EventRead) {
 
     }
+
     public void Connect(Object objController, String EventRead) {
-        chat = new ChatClient(Name);
+        Log.renameNikName(Name);
+        chat = new ChatClient(Name, controller);
         chat.SetEventRead(objController, EventRead);
         chat.execute();
     }
@@ -29,6 +36,7 @@ public class Player {
         chat.SendCommand(cmd, Text);
 
         System.out.println("Отправка:"+Name + ":" + Text);
+
         //chat.SendText(Text);
         return true;
     };
@@ -62,6 +70,6 @@ public class Player {
 
         SendCommand(CP,"Rename:" + this.Name + "->"+text);
         this.Name=text;
-
+        Log.renameNikName(this.Name);
     }
 }

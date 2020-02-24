@@ -1,5 +1,6 @@
 package Client;
 
+import ChatForm.Controller;
 import config.ReadConfig;
 
 import java.io.IOException;
@@ -11,14 +12,21 @@ public class ChatClient {
     private String hostname;
     private int port;
     private String userName;
+    private Controller controller;
 
     WriteThread wrtThread;
     ReadThread readThread;
     private Object ReadObject;
     private String EventRead;
 
+    public boolean isClose() {
+        //System.out.println(controller==null);
+
+        return controller==null;
+    }
     public void Close()
     {
+        System.out.println("ThreadClose");
         if (wrtThread!=null) {wrtThread.Run=false;};
         if (readThread!=null) {readThread.Run=false;};
 
@@ -34,12 +42,13 @@ public class ChatClient {
         this.userName = UserName;
     }
 
-    public ChatClient(String UserName) {
+    public ChatClient(String UserName, Controller controller) {
         ReadConfig readConfig = new ReadConfig();
         this.userName = UserName;
 
         this.hostname= readConfig.ReadParam("TcpServerIp");
         this.port = readConfig.ReadParamInt("TcpPort");
+        this.controller=controller;
     }
 
     public void SendText(String Text){

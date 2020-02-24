@@ -134,6 +134,7 @@ public class UserThread extends Thread {
 
                 do {
                     clientMessage = ReaderCmd(reader);//reader.readLine();
+                    if (clientMessage.equals("bye")) { break; }
                     cmd.Parse(clientMessage);
                     System.out.println(cmd.GenMessage(cmd.Text));
                     if (IfCMDName(cmd,"RENAME")) {
@@ -151,7 +152,7 @@ public class UserThread extends Thread {
                     System.out.println(serverMessage);
                     server.broadcast(GenCMDMessage(serverMessage), this);
 
-                } while (!clientMessage.equals("bye"));
+                } while (!clientMessage.equals("bye") );
 
                 server.removeUser(userName, this);
                 socket.close();

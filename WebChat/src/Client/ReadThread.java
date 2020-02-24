@@ -33,6 +33,17 @@ public class ReadThread extends Thread {
         }
     }
 
+    public void Stop()
+    {
+        System.out.println("CLOSE " + this.getClass());
+        this.Run=false;
+    }
+
+    public boolean IsClose()
+    {
+
+      return client.isClose();
+    }
     public String ReaderCmd(BufferedReader reader ) {
         StringBuilder SB = new StringBuilder();
         String l;
@@ -54,7 +65,7 @@ public class ReadThread extends Thread {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             Run=false;
         }
 
@@ -62,7 +73,7 @@ public class ReadThread extends Thread {
     }
 
     public void run() {
-        while (this.Run) {
+        while (this.Run && !IsClose()) {
           //  try {
 
                 String response = ReaderCmd(reader);
@@ -106,5 +117,8 @@ public class ReadThread extends Thread {
                     // }
                 }
         }
+
+
+
     }
 }

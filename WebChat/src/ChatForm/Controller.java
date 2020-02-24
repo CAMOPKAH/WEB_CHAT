@@ -1,6 +1,7 @@
 package ChatForm;
 
 import Client.CommandProtocol;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,7 +20,7 @@ public class Controller implements Initializable {
     public Label lblError;
     public Pane pnlChat;
     public Pane pnlLogin;
-    private Player player= new Player();
+    private Player player= new Player(this);
     public boolean DEBUG_MODE=true;
 
 
@@ -37,6 +38,12 @@ public class Controller implements Initializable {
     @FXML
     private Button btnSend;
     private javafx.scene.input.KeyCode KeyCode;
+
+    @FXML
+    public void exitApplication(ActionEvent event) {
+        System.out.println("Exit...");//((Stage)rootPane.getScene().getWindow()).close();
+    }
+
 
 
     public void EventRead(CommandProtocol cmd){
@@ -63,9 +70,20 @@ public class Controller implements Initializable {
            // }
 
     }
+
+    public void LoadLastMessageFromLog(){
+        if (player!=null && player.Log!=null) {
+           player.Log.renameNikName(player.Name);
+            for (String o : player.Log.GetLastMsg()) {
+                txtMessages.appendText(o+"\t\n");
+            }
+
+        }
+    }
     public void PrintMessage(String Name, String Text)
     {
         txtMessages.appendText(Name + ": " + Text +"\t\n");
+        player.Log.WriteLog(Name + ": " + Text);
     }
 
     public void btnSend() {
@@ -74,15 +92,16 @@ public class Controller implements Initializable {
         txtSend.clear();
 
     }
+
     public void btnRename() {
         //PrintMessage(player.Name, txtSend.getText());
         player.Rename(txtSend.getText());
         txtSend.clear();
-
     }
 
     public void OnClose()
     {
+        System.out.println("Close...");
         //Player.chat.Close();
     }
     public void AuthComplite(String Token, String MSG) {
@@ -91,6 +110,7 @@ public class Controller implements Initializable {
         if (Token.length()>0) {
             pnlChat.setVisible(true);
             pnlLogin.setVisible(false);
+            LoadLastMessageFromLog();
         }
         else
         {
@@ -132,6 +152,6 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Player player= new Player();
+        Player player= new Player(this);
     }
 }
