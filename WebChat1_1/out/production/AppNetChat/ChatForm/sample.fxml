@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<GridPane alignment="center" hgap="10" prefHeight="511.0" prefWidth="798.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ChatForm.Controller">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Pane fx:id="pnlChat" prefHeight="550.0" prefWidth="802.0" visible="false">
+         <children>
+            <TextArea fx:id="txtMessages" layoutX="24.0" layoutY="50.0" prefHeight="416.0" prefWidth="575.0" />
+            <Button fx:id="btnSend" layoutX="609.0" layoutY="476.0" mnemonicParsing="false" onAction="#btnSend" onMouseReleased="#SetSendFocus" prefHeight="31.0" prefWidth="150.0" text="Отправить" />
+            <TextField fx:id="txtSend" layoutX="24.0" layoutY="476.0" onKeyPressed="#onSendKey" prefHeight="31.0" prefWidth="575.0" />
+            <Label layoutX="24.0" layoutY="14.0" text="Сообщения:">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnRename" layoutX="609.0" layoutY="416.0" mnemonicParsing="false" onAction="#btnRename" onMouseReleased="#SetSendFocus" prefHeight="31.0" prefWidth="150.0" text="Переименовать" />
+         </children>
+      </Pane>
+      <Pane id="pnlLogin" fx:id="pnlLogin" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="edtLogin" layoutX="334.0" layoutY="165.0" prefHeight="31.0" prefWidth="198.0" />
+            <TextField fx:id="edtPassword" layoutX="334.0" layoutY="210.0" prefHeight="31.0" prefWidth="198.0" />
+            <Label layoutX="241.0" layoutY="161.0" text="Логин">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="241.0" layoutY="208.0" text="Пароль">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnLogin" layoutX="334.0" layoutY="262.0" mnemonicParsing="false" onAction="#btnLogin" prefHeight="31.0" prefWidth="82.0" text="Вход" />
+            <Button fx:id="btnReg" layoutX="416.0" layoutY="262.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="114.0" text="Регистрация" />
+            <ImageView fitHeight="77.0" fitWidth="92.0" layoutX="542.0" layoutY="163.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../Project/Дом/dev/kisspng-gear-clip-art-gear-5ac45b891badd3.5413363515228179291134.jpg" />
+               </image>
+            </ImageView>
+            <Label fx:id="lblError" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="329.0" prefHeight="122.0" prefWidth="777.0" textAlignment="CENTER" textFill="#f20303">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </children>
+</GridPane>
