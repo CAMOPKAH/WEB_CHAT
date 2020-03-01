@@ -100,9 +100,9 @@ public class CommandProtocol {
             SrcCfg=null;
             Text=Source;
         }
-        System.out.println(SrcCfg);
+      /*  System.out.println(SrcCfg);
         System.out.println("____________");
-        System.out.println(Text);
+        System.out.println(Text);*/
     }
 
 }

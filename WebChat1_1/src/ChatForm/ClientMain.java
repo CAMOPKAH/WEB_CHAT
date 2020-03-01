@@ -11,33 +11,28 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 public class ClientMain extends Application {
-    private static  Controller controller;
+    private  Controller controller;
+    private CloseClass cClose= new CloseClass();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("sample.fxml"));
+        //controller = new Controller();
         controller = loader.getController();
         loader.setController(controller);
 
         Parent root = loader.load();
+
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
-        primaryStage.setOnCloseRequest( event -> {
-            System.out.println("Stage is closing");
-            if (controller!=null)
-            {
-                controller.OnClose();
-            }
-            // Save file
-            //controller.OnClose();
-        });
+
         primaryStage.setTitle("WebChat");
-        primaryStage.setScene(new Scene(root));
+        Scene sc= new Scene(root);
+        primaryStage.setScene(sc);
 
         primaryStage.show();
-
 
 
     }
@@ -45,8 +40,8 @@ public class ClientMain extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        System.out.println(controller==null);
-        System.out.println("exiting...");
+
+
 
         //Решаем проблему запущенных потоков
         ThreadGroup rootGroup = Thread.currentThread().getThreadGroup();
@@ -81,8 +76,8 @@ public class ClientMain extends Application {
                }
 
            }
-          //  System.out.println(indent + "  Thread[" + t.getName()
-          //          + ":" + t.getClass() + "]");
+            System.out.println(indent + "  Thread[" + t.getName()
+                    + ":" + t.getClass() + "]");
         }
 
         // Recursively list all subgroups

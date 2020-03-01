@@ -1,5 +1,7 @@
 package Client;
 
+import ChatForm.Logger.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ public class ReadThread extends Thread {
     private ChatClient client;
     private Object ControllerObj;
     private String EventRead;
+    private Log log;
     public boolean Run=true;
 
 
@@ -23,20 +26,20 @@ public class ReadThread extends Thread {
         this.client = client;
         this.ControllerObj = ObjControler;
         this.EventRead = OnMethod;
-
+        this.log=client.log;
 
         try {
             InputStream input = socket.getInputStream();
             reader = new BufferedReader(new InputStreamReader(input));
         } catch (IOException ex) {
-            System.out.println("Error getting input stream: " + ex.getMessage());
+            log.WriteSys("Error getting input stream: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
     public void Stop()
     {
-        System.out.println("CLOSE " + this.getClass());
+        log.WriteSys("CLOSE " + this.getClass());
         this.Run=false;
     }
 
@@ -79,7 +82,7 @@ public class ReadThread extends Thread {
 
 
                 String response = ReaderCmd(reader);
-                System.out.println(response);
+                log.WriteSys(response);
                 if (response.length() > 0) {
 
                     CommandProtocol cmd = new CommandProtocol("");
@@ -87,7 +90,7 @@ public class ReadThread extends Thread {
 
                     if (cmd.ReadParam("CMD") == "AUTH") {
 
-                        System.out.println(cmd.ReadParam("RESPONSE"));
+                        log.WriteSys(cmd.ReadParam("RESPONSE"));
                     }
 
                     try {
@@ -98,7 +101,7 @@ public class ReadThread extends Thread {
 
                     java.lang.reflect.Method method;
                     try {
-                        System.out.println("BEG INVOKE__________");
+                        log.WriteSys("BEG INVOKE__________");
                         try {
                             method = ControllerObj.getClass().getMethod(EventRead, CommandProtocol.class);
 
@@ -108,7 +111,7 @@ public class ReadThread extends Thread {
                         } catch (InvocationTargetException e) {
 
                         }
-                        System.out.println("END INVOKE___________");
+                        log.WriteSys("END INVOKE___________");
                     } catch (SecurityException e) {
                     } catch (NoSuchMethodException e) {
                     } catch (IllegalAccessException e) {
@@ -121,7 +124,7 @@ public class ReadThread extends Thread {
                     System.out.print("[" + client.getUserName() + "]: ");
                 }*/
                     // } catch (IOException ex) {
-                    //     System.out.println("Error reading from server: " + ex.getMessage());
+                    //     log.WriteSys("Error reading from server: " + ex.getMessage());
                     //    ex.printStackTrace();
                     //     break;
                     // }

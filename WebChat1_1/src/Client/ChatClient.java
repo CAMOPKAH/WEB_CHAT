@@ -1,6 +1,7 @@
 package Client;
 
 import ChatForm.Controller;
+import ChatForm.Logger.Log;
 import config.ReadConfig;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class ChatClient {
     private int port;
     private String userName;
     private Controller controller;
+    Log log;
 
     WriteThread wrtThread;
     ReadThread readThread;
@@ -36,19 +38,22 @@ public class ChatClient {
         EventRead = eventRead;
     }
 
-    public ChatClient(String hostname, int port, String UserName) {
+    public ChatClient(String hostname, int port, String UserName, Log log) {
         this.hostname = hostname;
         this.port = port;
         this.userName = UserName;
+        this.log = log;
     }
 
     public ChatClient(String UserName, Controller controller) {
-        ReadConfig readConfig = new ReadConfig();
+        this.log=controller.log;
+        ReadConfig readConfig = new ReadConfig(log);
         this.userName = UserName;
 
         this.hostname= readConfig.ReadParam("TcpServerIp");
         this.port = readConfig.ReadParamInt("TcpPort");
         this.controller=controller;
+
     }
 
     public void SendText(String Text){
@@ -65,7 +70,7 @@ public class ChatClient {
         try {
             Socket socket = new Socket(hostname, port);
 
-            System.out.println("Connected to the chat server");
+            log.WriteSys("Connected to the chat server");
 
             readThread = new ReadThread(socket, this, ReadObject, EventRead);
             readThread.start();
@@ -74,9 +79,9 @@ public class ChatClient {
             wrtThread.start();
 
         } catch (UnknownHostException ex) {
-            System.out.println("Server not found: " + ex.getMessage());
+            log.WriteSys("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("I/O Error: " + ex.getMessage());
+            log.WriteSys("I/O Error: " + ex.getMessage());
         }
 
     }

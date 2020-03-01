@@ -1,7 +1,9 @@
 package ChatForm;
 
+import ChatForm.Logger.Log;
 import Client.CommandProtocol;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,8 +23,17 @@ public class Controller implements Initializable {
     public Label lblError;
     public Pane pnlChat;
     public Pane pnlLogin;
+    public Log log=new Log("cli");
     private Player player= new Player(this);
     public boolean DEBUG_MODE=true;
+    public CloseClass cClose=new CloseClass();
+   public Controller(){
+       this.cClose = cClose;
+       System.out.println("START....");
+       System.out.println(super.getClass().getSuperclass().getName());
+   }
+
+
 
 
     public String PlayerName;
@@ -39,12 +51,6 @@ public class Controller implements Initializable {
     private Button btnSend;
     private javafx.scene.input.KeyCode KeyCode;
 
-    @FXML
-    public void exitApplication(ActionEvent event) {
-        System.out.println("Exit...");//((Stage)rootPane.getScene().getWindow()).close();
-    }
-
-
 
     public void EventRead(CommandProtocol cmd){
 
@@ -61,14 +67,14 @@ public class Controller implements Initializable {
 
                 AuthComplite(Token, Msg);
             }
-        System.out.println("S7");
+
            // } else {
                 if (cmd.Text.trim().length() > 0) {
-                    AddText(cmd.Text + "\t\n");
+                    AddText(cmd.Text.trim() + "\t\n");
                 }
 
            // }
-        System.out.println("S8");
+
 
     }
 
@@ -80,11 +86,11 @@ public class Controller implements Initializable {
        }
     }
     public void LoadLastMessageFromLog(){
-        if (player!=null && player.Log!=null) {
-           player.Log.renameNikName(player.Name);
+        if (player!=null && log!=null) {
+           log.renameNikName(player.Name);
            StringBuilder SB = new StringBuilder();
-           for (String o : player.Log.GetLastMsg()) {
-                System.out.println(o);
+           for (String o : log.GetLastMsg()) {
+                log.WriteLog(o);
                 SB.append(o+"\t\n");
             }
             AddText(SB.toString());
@@ -94,7 +100,7 @@ public class Controller implements Initializable {
     public void PrintMessage(String Name, String Text)
     {
         AddText(Name + ": " + Text +"\t\n");
-        player.Log.WriteLog(Name + ": " + Text);
+        log.WriteLog(Name + ": " + Text);
     }
 
     public void btnSend() {
@@ -110,14 +116,10 @@ public class Controller implements Initializable {
         txtSend.clear();
     }
 
-    public void OnClose()
-    {
-        System.out.println("Close...");
-        //Player.chat.Close();
-    }
+
     public void AuthComplite(String Token, String MSG) {
         player.Token = Token;
-        System.out.println(player.Token);
+        log.WriteSys(player.Token);
         if (Token.length()>0) {
             pnlChat.setVisible(true);
             pnlLogin.setVisible(false);
@@ -127,10 +129,24 @@ public class Controller implements Initializable {
         {
             lblError.setText(MSG);
         }
-        System.out.println(MSG.trim());
+        log.WriteSys(MSG.trim());
 
     }
+    public void OnClose(){
+
+        System.out.println("Stage is closing>>>>>>>>");
+        player.chat.Close();
+        log.Close();
+    }
     public void btnLogin() {
+
+        Stage stage = (Stage) btnLogin.getScene().getWindow();
+        stage.setOnCloseRequest( event -> { OnClose();
+
+
+        });
+
+
 
         player.Connect(this,"EventRead" );
 
@@ -164,5 +180,6 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Player player= new Player(this);
+
     }
 }

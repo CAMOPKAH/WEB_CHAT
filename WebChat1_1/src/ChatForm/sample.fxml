@@ -10,7 +10,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button ?>
+
+
+
 <GridPane alignment="center" hgap="10" prefHeight="511.0" prefWidth="798.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ChatForm.Controller">
+
    <columnConstraints>
       <ColumnConstraints />
    </columnConstraints>
@@ -61,3 +67,4 @@
       </Pane>
    </children>
 </GridPane>
+

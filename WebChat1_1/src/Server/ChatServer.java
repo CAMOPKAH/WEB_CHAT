@@ -1,5 +1,6 @@
 package Server;
 
+import ChatForm.Logger.Log;
 import com.sun.deploy.util.SessionState;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class ChatServer {
     private int port;
+    Log log;
     //private Set<String> userNames = new HashSet<>();
     //private Set<String> userToken = new HashSet<>();
     //private Set<UserThread> userThreads = new HashSet<>();
@@ -33,7 +35,7 @@ public class ChatServer {
         {
             synchronized (Messages)
             {
-                System.out.println("AddMessage:" + sText);
+                log.WriteSys("AddMessage:" + sText);
                 Messages.add(sText);
             }
         }
@@ -45,17 +47,18 @@ public class ChatServer {
         }
     }
 
-    public ChatServer(int port) {
+    public ChatServer(int port, Log log) {
         this.port = port;
+        this.log = log;
     }
 
     public boolean Auth(String Login, String Password){
-        System.out.println("...AUTH" + Login+" "+Password);
+        log.WriteSys("...AUTH" + Login+" "+Password);
 
         String pass= null;
         try {
             pass = dbConn.GetPasswordUser(Login.trim());
-            System.out.println("Pass:" + pass);
+            log.WriteSys("Pass:" + pass);
             if (Password.equals(pass)  ) {
                 return true;
             }
@@ -72,9 +75,9 @@ public class ChatServer {
     public void execute() {
 
         try {
-            dbConn = new Conn();
+            dbConn = new Conn(log);
             dbConn.CreateDB();
-            System.out.println(dbConn.GetPasswordUser("oleg"));
+            log.WriteSys(dbConn.GetPasswordUser("oleg"));
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -85,19 +88,19 @@ public class ChatServer {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-            System.out.println("Chat Server is listening on port " + port);
+            log.WriteSys("Chat Server is listening on port " + port);
             executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
            // ExecutorService executor = Executors.newFixedThreadPool(1);
 
-            System.out.println("Start executer service");
+            log.WriteSys("Start executer service");
             new Thread(()->{
                 int Cnt = executor.getActiveCount();
                 while (executor!=null) {
 /*
                     if (Cnt!=executor.getActiveCount())
                     {
-                        System.out.println("_____________________________________________________");
-                        System.out.println("<<<<<<<" +  executor.getActiveCount() + ">>>>>>>>>>>>" +  executor.getPoolSize());
+                        log.WriteSys("_____________________________________________________");
+                        log.WriteSys("<<<<<<<" +  executor.getActiveCount() + ">>>>>>>>>>>>" +  executor.getPoolSize());
                         Cnt=executor.getActiveCount();
                     }*/
                     try {
@@ -123,22 +126,22 @@ public class ChatServer {
             //executor.
 
             while (true) {
-                System.out.println("--------");
+                log.WriteSys("--------");
                 Socket socket = serverSocket.accept();
-                System.out.println("New user connected");
+                log.WriteSys("New user connected");
 
                 UserThread newUser = new UserThread(socket, this);
                 //userThreads.add(newUser);
                 executor.execute(newUser);
-                System.out.println("NEW______" );
-                System.out.println("END");
+                log.WriteSys("NEW______" );
+                log.WriteSys("END");
 
                 //newUser.start();
 
             }
 
         } catch (IOException ex) {
-            System.out.println("Error in the server: " + ex.getMessage());
+            log.WriteSys("Error in the server: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -148,8 +151,8 @@ public class ChatServer {
      * Delivers a message from one user to others (broadcasting)
      */
     void broadcast(String message, UserThread aUser) {
-        System.out.println("broadcast:");
-        System.out.println(message);
+        log.WriteSys("broadcast:");
+        log.WriteSys(message);
        /* for (UserThread aUser : userThreads) {
             if (aUser != excludeUser) {
                 aUser.sendMessage(message);
@@ -181,7 +184,7 @@ public class ChatServer {
         ThreadClient TC = FindUser(aUser);
         if (TC!=null)
         {
-            System.out.println( "RenameUserName:" + TC.UserName + "->" + TC.UserName );
+            log.WriteSys( "RenameUserName:" + TC.UserName + "->" + TC.UserName );
             TC.UserName=userName;
 
         }
@@ -228,7 +231,7 @@ public class ChatServer {
 
         if (removed) {
 
-            System.out.println("The user " + userName + " quitted");
+            log.WriteSys("The user " + userName + " quitted");
        }
 
     }

@@ -2,6 +2,7 @@ package Server;
 
 
 
+import ChatForm.Logger.Log;
 import Client.CommandProtocol;
 import com.sun.deploy.util.SessionState;
 
@@ -20,10 +21,12 @@ public class UserThread implements Runnable {
     private BufferedReader reader;
     private OutputStream output;
     private Object MON= new Object();
+    private Log log;
 
     public UserThread(Socket socket, ChatServer server) {
         this.socket = socket;
         this.server = server;
+        this.log = server.log;
     }
 
     public boolean IsDead(){
@@ -126,37 +129,37 @@ public class UserThread implements Runnable {
                 writer = new PrintWriter(output, true);
 
                 printUsers();
-                System.out.println("D1");
+               
                 String response = ReaderCmd(reader);
-                System.out.println(response);
-                System.out.println("D2");
+                log.WriteSys(response);
+               
                 cmd = new CommandProtocol(null);
-                System.out.println("D3");
+               
                 cmd.Parse(response);
-                System.out.println("D4");
+              
                 String Token = null;
-                System.out.println("D5");
+               
                 String userName = null;
-                System.out.println("D6");
+               
 
 
                 String sCMD = cmd.ReadParam("CMD").trim();
-                System.out.println(sCMD);
+                log.WriteSys(sCMD);
                 if (sCMD.equals("AUTH")) {
-                    System.out.println("s1");
+                    
                     if (!Auth(cmd)) {
                         String Res = "Login or password not correct";
-                        System.out.println(Res);
+                        log.WriteSys(Res);
 
                         writer.println(GenCMDResponse("AUTH", Res));
                         writer.println("buy");
                         return;
                     } else {
-                        System.out.println("AUTH OK");
+                        log.WriteSys("AUTH OK");
                         Token = String.valueOf(reader.hashCode());
                         userName = cmd.ReadParam("LOGIN").trim();
                         writer.println(GenCMDAuthResponse(cmd.ReadParam("CMD"), Token, "AUTH:OK"));
-                        System.out.println("Login OK");
+                        log.WriteSys("Login OK");
 
                     }
 
@@ -177,7 +180,7 @@ public class UserThread implements Runnable {
             }
 
             else if (isAuth) {
-                //System.out.println("DOUBLE START");
+                //log.WriteSys("DOUBLE START");
                  CurClient = server.FindUser(this);
                 String clientMessage = null;
 
@@ -189,13 +192,13 @@ public class UserThread implements Runnable {
                             break;
                         }
                         cmd.Parse(clientMessage);
-                        System.out.println(cmd.GenMessage(cmd.Text));
+                        log.WriteSys(cmd.GenMessage(cmd.Text));
                         if (IfCMDName(cmd, "RENAME")) {
                             String newName = cmd.ReadParam("PARAM").trim();
                             if (newName.length() > 0) {
 
 
-                                //System.out.println("Rename:" + userName + "->" + newName);
+                                //log.WriteSys("Rename:" + userName + "->" + newName);
                                 String LastName = CurClient.UserName;
                                 server.RenameUserName(newName, this);
 
@@ -211,7 +214,7 @@ public class UserThread implements Runnable {
                             }
                         }
                         serverMessage = "[" + CurClient.UserName + "]: " + cmd.Text;
-                        System.out.println("broadcast:" + serverMessage);
+                        log.WriteSys("broadcast:" + serverMessage);
                         server.broadcast(GenCMDMessage(serverMessage), this);
 
                     }
@@ -221,7 +224,7 @@ public class UserThread implements Runnable {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("EventUser:" + CurClient.UserName);
+
 
                     //Отправялем сообщения если есть
                     WriteMessages();
@@ -243,7 +246,7 @@ public class UserThread implements Runnable {
                 }
 
         } catch (IOException ex) {
-            System.out.println("Error in UserThread: " + ex.getMessage());
+            log.WriteSys("Error in UserThread: " + ex.getMessage());
             ex.printStackTrace();
         }
         this.SetActive(false);
@@ -307,7 +310,7 @@ public class UserThread implements Runnable {
      * Sends a message to the client.
      */
     void sendMessage(String message) {
-        System.out.println("WRITELN:" +message);
+        log.WriteSys("WRITELN:" +message);
         writer.println(message);
     }
 }

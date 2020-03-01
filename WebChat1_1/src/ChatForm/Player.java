@@ -1,5 +1,6 @@
 package ChatForm;
 
+import ChatForm.Logger.Log;
 import Client.ChatClient;
 import Client.CommandProtocol;
 
@@ -11,19 +12,20 @@ public class Player {
     public ChatClient chat;
     private Controller controller;
 
-    public Logger Log;
+    public Log log;
 
     public Player (Controller controller){
         Name="none";
-        Log= new Logger(Name);
+
         this.controller=controller;
+        log=controller.log;
     }
     public void setEventRead(Object objController, String EventRead) {
 
     }
 
     public void Connect(Object objController, String EventRead) {
-        Log.renameNikName(Name);
+        log.renameNikName(Name);
         chat = new ChatClient(Name, controller);
         chat.SetEventRead(objController, EventRead);
         chat.execute();
@@ -35,14 +37,14 @@ public class Player {
         cmd.SetParam("CMD", "SEND");
         chat.SendCommand(cmd, Text);
 
-        System.out.println("Отправка:"+Name + ":" + Text);
+        log.WriteSys("Отправка:"+Name + ":" + Text);
 
         //chat.SendText(Text);
         return true;
     };
 
     public void SendCommand(CommandProtocol cmd, String Text){
-        System.out.println("Отправка:"+Name + ":" + Text);
+        log.WriteSys("Отправка:"+Name + ":" + Text);
         chat.SendCommand(cmd, Text);
 
     }
@@ -70,6 +72,6 @@ public class Player {
 
         SendCommand(CP,"Rename:" + this.Name + "->"+text);
         this.Name=text;
-        Log.renameNikName(this.Name);
+        log.renameNikName(this.Name);
     }
 }

@@ -1,3 +1,4 @@
+import ChatForm.Logger.Log;
 import Server.ChatServer;
 import Server.Conn;
 import config.ReadConfig;
@@ -8,11 +9,16 @@ public class ServerMain {
 
     public static void main(String[] args) {
 
-        String current = null;
-        ReadConfig readConfig = new ReadConfig();
+        Log log= new Log ("SRV");
 
+        String current = null;
+
+        ReadConfig readConfig = new ReadConfig(log);
+
+
+        log.WriteSys("Открытие базы данных");
         try {
-            Conn con = new Conn();
+            Conn con = new Conn(log);
             con.CreateDB();
            // System.out.println(con.GetPasswordUser("oleg"));
            // con.WriteDB();
@@ -41,7 +47,7 @@ public class ServerMain {
         }
 
 
-        ChatServer server = new ChatServer(port);
+        ChatServer server = new ChatServer(port, log);
         server.execute();
     }
 }

@@ -1,5 +1,7 @@
 package config;
 
+import ChatForm.Logger.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.util.Properties;
 public class ReadConfig {
    public Properties Prop = new Properties();
    String ConfigFile = "Config.properties";
+    private Log log;
 
    public String FileExists(String Path, String FileName){
        StringBuilder SB = new StringBuilder();
@@ -34,15 +37,18 @@ public class ReadConfig {
 
        return null;
    }
-    public ReadConfig() {
+    public ReadConfig(Log log) {
+       this.log=log;
+
         try {
            String Path =  new File( "." ).getCanonicalPath();
            String FileCfg = FileExists(Path, ConfigFile);
-            System.out.println(ConfigFile);
+           // log.WriteSys("Чтение параметров:"+ConfigFile);
            Prop.load(new FileInputStream( FileCfg));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        log.WriteSys("Чтение параметров завершно");
     }
 
     public String ReadParam(String Key) {

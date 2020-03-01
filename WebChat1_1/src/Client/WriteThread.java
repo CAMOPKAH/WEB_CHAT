@@ -1,27 +1,29 @@
 package Client;
 
+import ChatForm.Logger.Log;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 
 public class WriteThread extends Thread {
     private PrintWriter writer;
     private Socket socket;
+    private Log log;
     private ChatClient client;
     public boolean Run=true;
 
     public WriteThread(Socket socket, ChatClient client) {
         this.socket = socket;
         this.client = client;
-
+        this.log = client.log;
         try {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
         } catch (IOException ex) {
-            System.out.println("Error getting output stream: " + ex.getMessage());
+            log.WriteSys("Error getting output stream: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -35,6 +37,7 @@ public class WriteThread extends Thread {
     public void SendText(String Text)
     {
         writer.println(Text);
+        log.WriteSys("SEND:" + Text);
     }
     public boolean IsClose()
     {
@@ -43,7 +46,7 @@ public class WriteThread extends Thread {
     }
     public void Stop()
     {
-        System.out.println("CLOSE " + this.getClass());
+        log.WriteSys("CLOSE " + this.getClass());
         this.Run=false;
     }
 

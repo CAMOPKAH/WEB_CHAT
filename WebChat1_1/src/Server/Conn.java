@@ -1,15 +1,19 @@
 package Server;
 
+import ChatForm.Logger.Log;
+
 import java.sql.*;
 
 public class Conn {
-    public static Connection conn;
-    public static Statement statmt;
-    public static ResultSet resSet;
-
-    public Conn()  throws ClassNotFoundException, SQLException {
+    public  Connection conn;
+    public  Statement statmt;
+    public  ResultSet resSet;
+    private Log log;
+    
+    public Conn(Log log)  throws ClassNotFoundException, SQLException {
         conn = null;
-
+        this.log = log;
+       
 
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:users.db");
@@ -19,14 +23,14 @@ public class Conn {
     }
 
     // --------Создание таблицы--------
-    public static void CreateDB() throws ClassNotFoundException, SQLException
+    public  void CreateDB() throws ClassNotFoundException, SQLException
     {
         statmt = conn.createStatement();
         statmt.execute("CREATE TABLE if not exists 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'login' text,'password' text, 'nikname' text, 'TOKEN' INT);");
 
-        System.out.println("Таблица создана или уже существует.");
+        log.WriteSys("Таблица создана или уже существует.");
     }
-
+/*
 
     // --------Заполнение таблицы--------
     public static void WriteDB() throws SQLException
@@ -35,11 +39,11 @@ public class Conn {
         statmt.execute("INSERT INTO 'users' ('login', 'password','nikname') VALUES ('oleg', '456','Олег'); ");
         statmt.execute("INSERT INTO 'users' ('login', 'password','nikname') VALUES ('tatiana', '789','Татьяна'); ");
 
-        System.out.println("Таблица заполнена");
+        log.WriteSys("Таблица заполнена");
     }
+*/
 
-
-    public static String GetPasswordUser(String Login) throws ClassNotFoundException, SQLException
+    public String GetPasswordUser(String Login) throws ClassNotFoundException, SQLException
     {
         resSet = statmt.executeQuery("SELECT * FROM users u WHERE u.login='"+ Login+"'");
         String password = null;
@@ -54,34 +58,35 @@ public class Conn {
     }
 
     // -------- Вывод таблицы--------
-    public static void ReadDB() throws ClassNotFoundException, SQLException
+    public  void ReadDB() throws ClassNotFoundException, SQLException
     {
         resSet = statmt.executeQuery("SELECT * FROM users");
-
+;
         while(resSet.next())
         {
             int id = resSet.getInt("id");
             String name = resSet.getString("login");
             String phone = resSet.getString("password");
             String nikname = resSet.getString("nikname");
-            System.out.println( "ID = " + id );
-            System.out.println( "name = " + name );
-            System.out.println( "password = " + phone );
-            System.out.println( "nikname = " + nikname );
-            System.out.println();
+            log.WriteSys( "ID = " + id );
+            log.WriteSys( "name = " + name );
+            log.WriteSys( "password = " + phone );
+            log.WriteSys( "nikname = " + nikname );
+            
+            
         }
 
-        System.out.println("Таблица выведена");
+        log.WriteSys("Таблица выведена");
     }
 
     // --------Закрытие--------
-    public static void CloseDB() throws ClassNotFoundException, SQLException
+    public  void CloseDB() throws ClassNotFoundException, SQLException
     {
         conn.close();
         statmt.close();
         resSet.close();
 
-        System.out.println("Соединения закрыты");
+        log.WriteSys("Соединения закрыты");
     }
 
 
